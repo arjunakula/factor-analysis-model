@@ -1,0 +1,267 @@
+---
+title: "HW2"
+author: "Arjun Akula (904-758-334)"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem 1
+
+Given that $X$ is orthonormal, 
+
+$$so, (X^TX=XX^T = I) \: \& \: (n=m) \\$$
+$$ => X^{-1} = X^T$$
+
+$$
+P = XX^T\\
+=> P  = X(X^{-1})\\
+=> P  = I_{nXm} \\
+$$
+Therefore, trace of $P$ = sum of diagonal elements in $I$ = $1+1+...+\{m\:times\}$ = m.
+
+
+## Problem 2
+
+Given A is a positive definite matrix of dimensions nXn.
+
+Let $$A =\left[\begin{array}
+{r r}
+A_{11}\: A_{12} \\
+A_{21}\: A_{22}\\
+\end{array}\right]
+$$
+
+Let $A_{11}$ is a mXm matrix, where m is less than n.
+
+Suppose if $x_{1Xm}$ is not zero and y = ($x_{1Xm}^T$, $0^T_{1Xn-m})^T$,
+
+$y^TAy > 0$
+
+$$=>x^TA_{11}x > 0$$, which means $A_{11}$ is positive definite.
+Similarly we can show that $A_{22}$ is also a postive definite.
+
+If there is just one column in $A_{11}$, then that element ($a_{11}$) has to be greater than 0. 
+With the same argument, $a_{22}$ is greater than 0 in $A_{22}$.
+We can generalize this as $a_{ii}$ > 0
+
+Now, if y is $(-A_{12}*x/a_{11}, x^T)^T$, then $y^TAy > 0$. If we analyze this closely (as i couldn't show this properly in rmd document), we can see that $A_{22}-A_{21}a_{11}^{-1}A_{12} > 0$, which basically says that we can indeed construct a upper triangular matrix Z such that $A = Z^TZ$
+Now, we just need to prove that Z is unique.
+
+Let say we can construct another matrix B like Z.
+
+As $Z^TZ = A = B^TB$, $z_{11}^2 = b_{11}^2 = a_{11}$. That means $z_{11} = b_{11}$.
+In the same manner, we can show that $z_{ii} = b_{ii}$. Hence Z is unique.
+
+
+
+
+
+
+
+
+
+
+
+
+## Problem 3
+Let $u_1$,$u_2$ and $u_3$ be the orthonormal basis for $v_1$,$v_2$ and $v_3$.
+
+![](3.png)
+
+![](1.png)
+
+![](2.png)
+
+![](4.png)
+
+![](5.png)
+
+## Problem 4
+
+(a)
+A - C = (A - B) + (B - C)
+
+=> $x^T(A-C)x$ = $x^T(A - B)x + x^T(B - C)x$
+
+since A-B is positive semi-definite, $x^T(A - B)x >= 0$, for all x
+
+since B-C is positive semi-definite, $x^T(B - C)x >= 0$, for all x
+
+Hence, $x^T(A-C)x >= 0$, i.e. A-C is also positive semi-definite.
+
+(b)
+since A-B is positive semi-definite, $x^T(A - B)x >= 0$, for all x
+
+since B-A is positive semi-definite, $x^T(B - A)x >= 0$, for all x
+
+From above two conditions, it is clear that $x^T(A - B)x = 0$, i.e. A-B = 0 => A=B
+
+## Problem 5
+(a)
+
+As A, B are positive definite matrices, they both will have positive definite square roots. so we can write A as $A_1^2$ and B as $B_1^2$.
+
+A-B is positive defnite 
+
+$=> x^T(A-B)x > 0$
+
+$=> x^TAx > x^TBx$
+
+$=> xx^TAxx^T > xx^TBxx^T$
+
+$=> A > B$
+
+$=> B_1^{-1}A > B_1^{-1}B$
+
+$=> B_1^{-1}AB_1^{-1} > B_1^{-1}BB_1^{-1}$
+
+$=> B_1^{-1}AB_1^{-1} > B_1^{-1}B_1B_1B_1^{-1}$
+
+$=> B_1^{-1}AB_1^{-1} > I$
+
+$=> B_1A^{-1}B_1 < I^{-1}$
+
+$=> B_1^{-1}B_1A^{-1}B_1B_1^{-1} < B_1^{-1}IB_1^{-1}$
+
+$=> A^{-1} < B^{-1}$
+
+$=>(B^{-1}-A^{-1})$ is positive definite
+
+(b)
+Using cholesky decomposition, let A = $XX^T$ and B = $YY^T$
+
+ $A^{-1} = X^{-T}X^{-1}$
+
+ $B^{-1} = Y^{-T}Y^{-1}$
+ 
+ The eigen value for $Y^{-1}XX^TY^{-T}$ is >= 1. Moreover, $Y^{-1}XX^TY^{-T}$ and $XX^TY^{-T}Y^{-1}$ have same eigen values. 
+ 
+ Hence det($AB^{-1}$) = det($Y^{-1}XX^TY^{-T}$) >= 1 (as determinant = product of eigen values). This implies that det(A) >= det(B)
+ 
+ All the elements of (A-B) are >= 0, otherwise the condition $x^T(A-B)x > 0$ may not hold true. So, the sum of all diagonal elements is positive as the individual element is positive. Hence trace (A-B) >= 0 => tr(A) >= tr(B).
+ 
+
+## Problem 6
+
+$$\lim_{k\to\infty}A^K = 0$$
+
+$A = XDX^T$
+
+$A^k = XD^kX^T$
+
+ $$=>\lim_{k\to\infty}XD^KX^T = 0$$
+The limit will be zero only if values of diagonal matrix reduce at every interation. That is possible only if values elements in D (|d1|, |d2|, etc) are less than 1. (otherwise the values will explode)
+
+Hence |$d_i$| < 1
+
+
+## Problem 7
+
+$A = UDV^T$
+
+$$(1/\sqrt{2})\left[\begin{array}
+{r r}
+VD\:\:\: -VD \\
+UD\:\:\: UD\\
+\end{array}\right]
+(1/\sqrt{2})\left[\begin{array}
+{r r}
+V^T\:\:\: U^T \\
+V^T\:\:\: -U^T\\
+\end{array}\right]
+$$
+
+$$= (1/2)\left[\begin{array}
+{r r}
+0\:\:\: VDU^T \\
+UDV^T\:\:\: 0\\
+\end{array}\right]
+$$
+
+
+$$ = \left[\begin{array}
+{r r}
+0\:\:\: A^T \\
+A\:\:\: 0\\
+\end{array}\right]
+$$
+
+## Problem 10
+
+(a)
+
+I used the eigen module in R to find the eigen vectors and eigen values.
+```{r, eval=FALSE}
+A =  matrix(c(10,7,8,7,
+  7,6,6,5,
+  8,6,10,9,
+  7,5,9,10),nrow=4)
+
+eigen(A)
+
+```
+
+Eigen values I got from R are as follows:
+
+$values
+
+[1] 30.4375830  4.0468404  0.8764022  0.6391745
+
+Eigen vectors I got from R are as follows:
+
+$vectors
+
+           [,1]       [,2]       [,3]       [,4]
+
+[1,] -0.5263856  0.5551497  0.4771728 -0.4324732
+
+[2,] -0.3915365  0.4740296 -0.3372886  0.7129036
+
+[3,] -0.5490379 -0.2839068 -0.6609934 -0.4254904
+
+[4,] -0.5178559 -0.6216926  0.4707763  0.3517006
+
+(b)
+I used the svd module in R to find the singular value decomposition.
+```{r, eval=FALSE}
+A =  matrix(c(10,7,8,7,
+  7,6,6,5,
+  8,6,10,9,
+  7,5,9,10),nrow=4)
+
+svd(A)
+
+```
+
+The U,V abd D values of SVD for the given matrix A are as follows:
+
+$d
+
+[1] 30.4375830  4.0468404  0.8764022  0.6391745
+
+$u
+
+           [,1]       [,2]       [,3]       [,4]
+
+[1,] -0.5263856 -0.5551497  0.4771728 -0.4324732
+
+[2,] -0.3915365 -0.4740296 -0.3372886  0.7129036
+
+[3,] -0.5490379  0.2839068 -0.6609934 -0.4254904
+
+[4,] -0.5178559  0.6216926  0.4707763  0.3517006
+
+$v
+
+           [,1]       [,2]       [,3]       [,4]
+
+[1,] -0.5263856 -0.5551497  0.4771728 -0.4324732
+
+[2,] -0.3915365 -0.4740296 -0.3372886  0.7129036
+
+[3,] -0.5490379  0.2839068 -0.6609934 -0.4254904
+
+[4,] -0.5178559  0.6216926  0.4707763  0.3517006

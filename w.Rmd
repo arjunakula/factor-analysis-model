@@ -1,0 +1,195 @@
+---
+title: "Enigma Cracker"
+author: "ArjunAkula (904-758-334)"
+date: "January 18, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem 1
+
+As mentioned in the problem, I used default ring setting as AAA, rotor configuration as (1,2,3) and reflector B. Using these settings, I explored through the complete search space of rotor start position (i.e. 26X26X26) till I get the original message that ends with the string ENDOFTRANSMISSION. I used the Enigma module provided in the script to decipher the message.
+
+The R code summarizing above algorithm is as follows:
+
+```{r, eval=FALSE}
+
+ code_str = "MAKTFBFITKJWRPWRMCTNBZJPPOPNIJKURHDYIOTEYHFOTYWEZJYAVZZVQHLLFTYBWZQGQNIGQVCLAHYGWODPWFRHXYNAYKULAFZRTHBEEBYGIGSMFNCDDBTCIJJNPDNFZJZHMUNFHHJHHRPBHDTSLMWGWXTABPNUDFVNCRQCXWHQWVJNENKXUNVGVVLHMGCFGTMZYEVFDFTAYQJDZKHSGAAJSXTYPEHGJTYLOVDIQRLHTZIXYZPLRHCNOUENRPFIG";
+ 
+ for (i1 in 1:26){
+   for(j1 in 1:26){
+     for(k1 in 1:26){
+       
+    # rotor setting
+     rotor_start = paste(LETTERS[i1], LETTERS[j1], LETTERS[k1], sep='')
+ 
+     # check if you have ENDOFTRANSMISSION at the end of decrypted message
+     if(substr(Enigma(code_str,rotor_start),241,257) == "ENDOFTRANSMISSION"){
+       print(rotor_start);
+       stop("Found the code!!!")
+     }
+     }
+   }
+ }
+
+```
+
+After executing the above code, I found the rotor start position as "MSH". The original message is "THE STEEPENING DROP IN GASOLINE PRICES IN RECENT WEEKS SPURRED BY SOARING DOMESTIC ENERGY PRODUCTION AND SAUDI DISCOUNTS FOR CRUDE OIL AT A TIME OF FALTERING GLOBAL DEMAND IS SET TO PROVIDE THE UNITED STATES ECONOMY WITH A MULTI BILLION DOLLAR BOOST THROUGH THE HOLIDAY SEASON AND BEYOND END OF TRANSMISSION". This can be tested with the following testcase: 
+
+
+```{r, eval=FALSE}
+
+code_str = "MAKTFBFITKJWRPWRMCTNBZJPPOPNIJKURHDYIOTEYHFOTYWEZJYAVZZVQHLLFTYBWZQGQNIGQVCLAHYGWODPWFRHXYNAYKULAFZRTHBEEBYGIGSMFNCDDBTCIJJNPDNFZJZHMUNFHHJHHRPBHDTSLMWGWXTABPNUDFVNCRQCXWHQWVJNENKXUNVGVVLHMGCFGTMZYEVFDFTAYQJDZKHSGAAJSXTYPEHGJTYLOVDIQRLHTZIXYZPLRHCNOUENRPFIG";
+
+msg = "THESTEEPENINGDROPINGASOLINEPRICESINRECENTWEEKSSPURREDBYSOARINGDOMESTICENERGYPRODUCTIONANDSAUDIDISCOUNTSFORCRUDEOILATATIMEOFFALTERINGGLOBALDEMANDISSETTOPROVIDETHEUNITEDSTATESECONOMYWITHAMULTIBILLIONDOLLARBOOSTTHROUGHTHEHOLIDAYSEASONANDBEYONDENDOFTRANSMISSION" 
+
+ if(Enigma(code_str,"MSH") == msg){
+      print("TEST PASSED");
+ }
+
+```
+
+
+## Problem 2
+
+In this problem, I explored through the complete search space of rotor start position (i.e. 26X26X26)  and ring (26X26X26) till I get the original message that begins with ANX and ends with the string YOURSTRULY. As the search space is too high in this case, I tried to establish a relation between ring and rotor settings. However, I couldn't find any heuristic that could possibly reduce the search space. 
+
+To some extent, I was able to reduce computational complexity a bit by first decrytping the first three characters, i.e. only after the first three characters are decrypted as "ANX", I will proceed to search for the crib YOURSTRULY. Again, I used the Enigma module provided in the script to decipher the message.
+
+The R code summarizing above algorithm is as follows:
+
+```{r, eval=FALSE}
+
+ code_str1 = "KRK"; # first three chars of message
+ code_str2 = "KRKWPXMBNFZVFGGJXJIXDODQCWLLLXZPKSRPOJQQDNEPRXXHCSCMGIOBKYASWDCYRLYBGNAZHSCGFSEQYTWVXMQWYACJLSNRFAAMDCADLUSYOUTPWE";
+ 
+ for (z1 in 1:26){
+   for(z2 in 1:26){
+     for(z3 in 1:26){
+     
+       # ring setting  
+       ring = paste(LETTERS[z1], LETTERS[z1], LETTERS[z3], sep='')
+       
+       for (i1 in 1:26){
+         for(j1 in 1:26){
+           for(k1 in 1:26){
+             
+             #rotor setting
+             rotor_start = paste(LETTERS[i1], LETTERS[j1], LETTERS[k1], sep='')
+             
+             if(Enigma(code_str1,rotor_start,ring) == "ANX"){
+               
+               #"Found the begin code. Now check for the end code;
+               if(substr(Enigma(code_str2,rotor_start,ring),105,114) == "YOURSTRULY"){
+                 print(rotor_start);
+                 print(ring);
+                 stop("Found the end code!!!")
+               }
+             }
+           }
+         }
+       }
+     }
+   }
+ }  
+
+```
+
+After executing the above code, I found the rotor start position as "TEQ" and the ring setting as "AAK". The code executiuon  didn't take much time as the ring setting was found at 11th iteration. The original message is "ANX YOU XX CONGRATULATIONS ON BREAKING THE ENIGMA MACHINE XX SUPERBLY WELL DONE XX THE KEY AND RING SETTINGS ARE TEQ AND AAK XX YOURSTRULY". This can be tested with the following testcase: 
+
+
+```{r, eval=FALSE}
+
+code_str = "KRKWPXMBNFZVFGGJXJIXDODQCWLLLXZPKSRPOJQQDNEPRXXHCSCMGIOBKYASWDCYRLYBGNAZHSCGFSEQYTWVXMQWYACJLSNRFAAMDCADLUSYOUTPWE";
+
+msg = "ANXYOUXXCONGRATULATIONSONBREAKINGTHEENIGMAMACHINEXXSUPERBLYWELLDONEXXTHEKEYANDRINGSETTINGSARETEQANDAAKXXYOURSTRULY" 
+
+if(Enigma(code_str,"MSH") == msg){
+    print("TEST PASSED");
+}
+
+```
+
+
+## Problem 3
+
+In this problem, as there are no cribs provided, my first goal was to find some cribs by setting random ring and rotor settings. Also I used the fact that relative frequency of letters used in original message is known to us. So, first I used the default ring setting and explored the search space of the rotor settings (26X26X26). I then compared relative frequency of letters in each of the decoded messages with letter frequency values provided to us. I used Euclidean distance to compare the distances. I ordered all 17576 messages based on the frequency match. 
+
+I observed that the closely matched rotor settings followed a pattern: WEX, XFX and YGX. We can see that first letters are incremented by 1 (W->X->Y) and the second letter is also correspondingly increased by 1 (E->F->G). So I tried to find the ring setting of all such patterns of rotors, instead of exploring the 26^6 search space. Moreover, along the way, I found the cribs such as  "THEMIGHTIESTMEN", "STRANGE", "DIVINE", "THEMIGHTYONESOFTHEWORLDLEARNEDTOHAVE", "WISH", "REVERENTLYBEFORETHESAINT", "THEENIGMAOF", etc. I used all these cribs in exploring the search space.
+ 
+The R code summarizing above algorithm is as follows:
+
+```{r, eval=FALSE}
+for (z1 in 1:26){
+  
+  for(z2 in 1:26){
+    
+    for(z3 in 1:26){
+  
+      #ring setting
+      ring = paste(LETTERS[z1], LETTERS[z1], LETTERS[z3], sep='')
+      
+      # search rotor settings of pattern like WEX, XFX, YGX, ZHX, AIX, AIA, AIB, etc
+      for (i1 in 1:1){
+        
+        for(j1 in 9:9){
+          
+          for(k1 in 1:26){
+            
+            rotor_start = paste(LETTERS[i1], LETTERS[j1], LETTERS[k1], sep='');
+            
+            decipher_short = Enigma(code_str1,rotor_start,ring);
+            
+            # check for the crib at the begin of message
+            if(decipher_short == "THEMIGHTIESTMEN"){
+              
+              decipher = Enigma(code_str2,rotor_start,ring);
+              
+              if(grepl("STRANGE",decipher) & grepl("DIVINE",decipher) & grepl("THEMIGHTYONESOFTHEWORLDLEARNEDTOHAVE",decipher) & grepl("WISH",decipher) & grepl("REVERENTLYBEFORETHESAINT",decipher) & grepl("THEENIGMAOF",decipher)){
+                
+                print(ring);
+                print(rotor_start)
+                stop();
+                # cr_val = c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+                # names(cr_val) = c("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z");
+                # for (i in 1:nchar(decipher)){
+                #   cr_val[substr(decipher,i,i)] = cr_val[substr(decipher,i,i)]+1
+                # }
+                # 
+                # cr_vec_val = as.vector(cr_val);
+                #
+                # #Euclidean distance calculation
+                # distance = sqrt(sum((cr_vec_val-freq_orig)^2));
+                # 
+                # rotor_score = append(rotor_score,distance);
+                # rotor_names = append(rotor_names,rotor_start);
+              }
+            }
+            
+          }
+        }
+      }
+    }
+  }
+}
+
+## ordering rotor settings based on frequency match.
+# names(rotor_score) = rotor_names;
+# rotor_score_final = rotor_score[order(unlist(rotor_score))]
+# 
+## note the closest matches in a file to find cribs
+# fileConn<-file("output_final.txt")
+# write(rotor_score_final, fileConn)
+# close(fileConn)
+# 
+# fileConn<-file("output_final2.txt")
+# write(names(rotor_score_final), fileConn)
+# close(fileConn)
+# 
+
+```
+
+After executing the above code, I found the rotor start position as "AIE" and the ring setting as "DDH". The original message is "THEMIGHTIESTMENHAVEHITHERTOALWAYSBOWEDREVERENTLYBEFORETHESAINTASTHEENIGMAOFSELFSUBJUGATIONANDUTTERVOLUNTARYPRIVATIONWHYDIDTHEYTHUSBOWTHEYDIVINEDINHIMANDASITWEREBEHINDTHEQUESTXEFBKADZJVUPFLYSBCOINBKMFVDKTUHBFJQKOHOGBENZTAQSZEFGZCJOQZHJYMIYTIEQUYFWYCHNHSQPFBAZZCYDLVTRSSHCIODBYEYESIBFMQCDVXKOKTSKIXFQLYCKEMHTECUPBNOXMIQYPNUOVVYMOOOPVJMZRPIEYTBNKVVRNLXRBXZMCOTYRWQYBGEQVWTOQEJATQEZHTPELCBMULAUCBVZBRGMIIUHOYIMDDOPIZBYYDRBQCDKKSDGZSOLFWLFYFEEDNWXCHHAZWOBOQCMXSJLSSWWCUJTNUBOXXQOPKZPZBAUDZAPPXFGIUYXSNOPMSWPJUGKLVWHAHEQYRMPPBADAMKKYZNEGKLSXFCMZPPNPPHFWXPCOAVKGDSDFFBDVJHEYHAVESAIDINQUIRINGLYTHEREISPERHAPSAREASONFORITSOMEVERYGREATDANGERABOUTWHICHTHEASCETICMIGHTWISHTOBEMOREACCURATELYINFORMEDTHROUGHHISSECRETINTERLOCUTORSANDVISITORSINAWORDTHEMIGHTYONESOFTHEWORLDLEARNEDTOHAVEANEWFEARBEFOREHIMTHEYDIVINEDANEWPOWERASTRANGESTILLUNCONKLBKXLVVDBJCGPLFNYNZLSSSJBEEFILGYRXZCBCUTACJWQGNPRGHOUBSJXUAMRNGBHPXNBMROIVAIBPLLMGIXK".

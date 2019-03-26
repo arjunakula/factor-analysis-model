@@ -1,0 +1,148 @@
+---
+title: "Matrix Algebra and Optimization"
+author: "<center>Statistics 202B</center>"
+date: "The Enigma Machine"
+subtitle: <center>Homework 1</center>
+---
+
+You are required to write a *markdown document* containing text, code, and test cases. Thus you must create an `Rmd` file, that RStudio can convert to `html`. Only upload the `html` file to the CCLE. 
+
+This initial homework will require substantial R and possible C programming (e/g. Rcpp). It also requires application of
+computational statistical principles.
+
+The Enigma machine is a mechanical device to encode text messages so that
+they can not be read by outsiders who has access to the encoded text. The
+idea is to replace the text with a text of encoded characters. The
+true recipient of the message has additional knowledge that enables them to
+decode the message and see the original text. The Enigma is a machine that
+uses an *substitution cipher* which involves substituting one letter for
+another according to some rule.
+
+There are many introductions to the Enigma machine. See
+[a description in words](http://www.codesandciphers.org.uk/enigma/enigma1.htm) and some good short videos
+[Part I](http://www.youtube.com/watch?v=G2_Q9FoD-oQ "")
+and
+[Part II](http://youtu.be/V4V2bpZlqx8 "").
+As further background there is [additional footage](http://youtu.be/BdrrJ7qd4HA "").  
+
+There were many versions of the Enigma machine, some meant for commercial
+use and others for various branches of the military.
+
+It is possible to write `R` code that emulates the German M3 Enigma machine. 
+
+The file `Enigma.emulator.R` contains `R` code that does this. 
+Note that the Enigma only encodes the (upper case) letters A-Z. So all spaces, punctuation and symbols are excluded from the messages (and its
+encode).
+
+The `R` function `Enigma` ciphers and deciphers character strings.
+In addition to the message to be encrypted/decrypted, `input`, the user of
+the machine needs to set (or leave as default) the following four arguments:  
+
+  a. the `rotor.start` position, which is three letter combination, for example "ERT", "PWQ", or "TMM".
+  b. the `ring` setting, which is also a three letter combination.
+  c. the `rotor.config`, the numbers of the three rotors chosen from the eight possible Enigma machine rotors. They are listed in order from left to right, and supplied as a numeric vector, for example `c(1,2,3)`, `c(6,4,3)`, or `c(8,1,2)`.
+  d. the `reflector`, of which there existed two variants, called "B" and "C". The default is "B".
+  
+This version of the Enigma machine does not use the plugboard.
+It is important to note that if you take the output of the `Enigma` function and run it through the `Enigma`
+function *with the same settings* it will return the original message.
+
+Note that the physical Enigma machine was delivered with only one rotor of each type, so
+in practice rotor orders such as `c(1,1,1)` or `c(4,2,2)` could not be used.
+
+Note also that no letter can be encrypted into itself, which allowed for
+quick so-called *crib dragging*, which sped up brute force attacks greatly.
+A *crib* is a snippet of text presumed to be included in the decrypted
+message, for example "WEATHERREPORT". Another weakness of the Enigma
+machine is the ordered one-to-one correspondence between letters in the
+encrypted and decrypted messages: if one letter is changed in the decrypted
+message, it will only affect the one letter in the same position of the encrypted message.
+
+*Hint*: The utility function `next_key` is useful for the Enigma emulator. The function accepts a
+three letter character string or vector, e.g. "AAA", and returns the
+next three letter character string in lexicographical order. For
+example, "AAA" become "AAB", and "DZZ" becomes "EAA".
+Note that this function does not replicate the rotor steppings of
+the Enigma machine, which depend on the rotor configuration used.
+
+In this problem, you are tasked to break the Enigma code by a so-called
+brute force attack, given *cribs*, snippets of known
+plaintext, which are supplied by intelligence operators.  
+
+1) Consider first a commercial version of the Enigma with default ring setting (i.e., "AAA"). Further, the rotor configuration 1, 2, 3 and reflector B were commonly used.  
+
+    The following message has been intercepted:  
+    ```
+    MAKT FBFI TKJW RPWR MCTN BZJP POPN IJKU RHDY IOTE YHFO TYWE ZJYA VZZV QHLL FTYB
+    WZQG QNIG QVCL AHYG WODP WFRH XYNA YKUL AFZR THBE EBYG IGSM FNCD DBTC IJJN PDNF
+    ZJZH MUNF HHJH HRPB HDTS LMWG WXTA BPNU DFVN CRQC XWHQ WVJN ENKX UNVG VVLH MGCF
+    GTMZ YEVF DFTA YQJD ZKHS GAAJ SXTY PEHG JTYL OVDI QRLH TZIX YZPL RHCN OUEN RPFI G
+    ```
+
+    Based on knowledge about the oil business, that the message originated from, you
+    believe that it is highly likely that this message ends with
+    "ENDOFTRANSMISSION".  
+
+    Determine the Enigma machine settings, and decipher the message.
+
+2) The following military message has also been intercepted:  
+    ```
+    KRKW PXMB NFZV FGGJ XJIX DODQ CWLL LXZP KSRP OJQQ DNEP 
+    RXXH CSCM GIOB KYAS WDCY RLYB GNAZ HSCG FSEQ YTWV XMQW
+    YACJ LSNR FAAM DCAD LUSY OUTP WE  
+    ```
+
+    The intelligence operators deem that it is very likely that the
+    message begins with `ANX` (meaning *To:*),
+    and ends with `YOURSTRULY`. The Enigma machine probably used 
+    a non-default ring setting, but at this time the rotor configuration
+    `1,2,3` and reflector `B` were commonly used.
+
+    Determine the Enigma machine settings, and decipher the message.
+
+3) *Warning: This is a harder question*
+
+    The following longer message has also been intercepted:  
+    ```
+    DMSBSWYGFPUMKFXFLUAYSISJSOCSRAZEBRTCMPEBBKNIEUIWECUAIIUDTUTGEHCKRTDTWAEPEZUFODTP
+    TKHPHFHLTDIKLNVFLJEYYRLYXCMFOFLWZMEFECOUHYPVNGXFHNNQHFRWJTDHZCXQPKOSGEBKEHCPTYYI
+    IXJJDUFJVAECTZCATWMXCQGZRVQNUZKJWECJOZTUJSYATCCEJTUOBPKTHKCUKQQFKUYSUMAFFAAJOFXJ
+    YTZITOBLKYOZOMIFIBHZTCAMNPDEYMAVYDUABBDFEYXBGHUDBNAUCXQADINCMGSSLJKDEVXIKZQKMFMJ
+    EIQBJPYJQEHNGFPYNAUGYYFQNXCJGAFHQIYHEWAPFSIHIJUXXQINCRRRVABCRSXAOXNKKPYPZUDGHJFP
+    DWGALQAEYZFUUJEKLIJQEEEHNZVISUCDWOQOZTKAFBZKOBBYMEKWKSVVYQRPRLSQGHUVTMCCLCTUISDT
+    YRWHUZFRUOPMIIWTGZIHABKZCRGQSKFUYGKVFDRTSROGEICPTCDHSIVBDSIBGJUGJPFUMKPDEZINLMOT
+    RMXUGNTDQJFJLHCQQYDNCWMRPKEAQZQQLFTKFKDLUXHGMFRZYGRFIVWGRRUNRPPNUGDUTBCDYLBKAUKR
+    DOAPNMEJRBZNQVSCCMZABLSBAIHJZOANIFBCNCSQRAPAPKUQPUOSMJOERKTKOGBYJUPZITKVLCLGRUTO
+    MUCIKTVXCNQKLRBGDYJCPTBOUQLTWWCMCLNHKROFXQGJARRWJRKBZOHXZCRQROZDTBJLZWOCOMENBYAO
+    RXTFZEJYFHSGWCQZBYIGEPESPSZSWIZRKOCEUQSREAQEEJVGDIVKYEOSAVTSWYLZCVHRASERSWIIFYUT
+    UJGZQGPUAXGKJJRDLVWIKWQPGRVDDD
+    ```
+
+    While the Enigma machine probably used the rotor configuration
+    `1,2,3` and reflector `B`, no cribbing message has been observed.  
+    The other information you have is the relative frequency of letters used in 
+    decoded (English) messages. 
+    These are stored in the vector `letterfreq` in the
+    file "EnigmaFreq.RData" (with the homework). A copy of the above string is in the variable 
+    `textmid`.  
+    Presumably, a proper decode of the above message would have letter frequencies close to the 
+    typical frequency.  
+    Determine the Enigma machine settings, and decipher the message.
+
+
+Submit
+------------------------------------------------
+Upload the `html` version of your homework before the end of the due date via the *Homework* page
+on the class CCLE. Submit only the `html` file, but make sure RStudio knits it
+correctly from your `Rmd` file. 
+The `R` code must be clearly readable and properly commented. Explain your
+solutions well.
+
+Cooperation
+------------------------------------------------
+A limited amount of cooperation on the homework is allowed, but everybody
+hands in their own document. If you have cooperated in a group, indicate
+this in your document and mention the names of the other students in the
+group. Groups of more than four students are not allowed. Everybody in a
+group will get the same grade, even if the individual documents are
+different.
